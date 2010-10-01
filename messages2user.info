@@ -1,0 +1,4 @@
+; $Id$
+name = messages to user
+description = Send messages to user by e-mail
+core = 6.x

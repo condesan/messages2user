@@ -1,0 +1,102 @@
+<?php
+//$Id$
+
+function messages2user_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'view':
+			if($node->type == 'perfil') { #replace by content type that you will use
+				$node->content['messages2user'] = array(
+				'#value' => drupal_get_form('messages2user_form', $node),
+				'#weight' => 1000,
+				);
+			}
+			break;
+  }
+}
+
+
+function messages2user_form($form_state, $node) {
+	
+	$form = array();
+	
+	$form['messages2user'] = array(
+		'#title' => utf8_encode(t('Envíale un mensaje')), #codifica caracteres como los acentos a utf8
+		'#type' => 'fieldset',
+		'#collapsible' => TRUE,
+		'#collapsed' => TRUE,
+	);
+
+	$form['messages2user']['surnames'] = array(
+		'#title' => t('Apellidos y nombres'),
+		'#type' => 'textfield', 
+		'#description' => t('Ingresa sus apellidos y nombres'),
+	);
+
+	$form['messages2user']['email'] = array(
+		'#title' => t('E-mail'),
+		'#type' => 'textfield', 
+		'#description' => t('Ingrese e-mail'),
+	);
+
+	$form['messages2user']['subject'] = array(
+		'#title' => t('Asunto'),
+		'#type' => 'textfield', 
+		'#description' => t('Ingrese el asunto del mensaje'),
+	);
+
+	$form['messages2user']['body'] = array(
+		'#title' => t('Mensaje'),
+		'#type' => 'textarea', 
+		'#description' => t('Ingrese cuerpo del mensaje'),
+		'#cols' => 30,
+	);
+
+	$form['useremail'] = array(
+		'#type' => 'hidden', 
+		'#value' => $node->field_perfil_email1[0]['value'], #replace by field which you will use: $node->field_perfil_email1[0]['value']
+	);
+
+	$form['messages2user']['submit'] = array(
+		'#type' => 'submit', 
+		'#value' => t('Enviar'),
+	);
+
+	
+	return $form;
+	
+	}
+
+/**
+ * @form
+ * @form_state
+ * send message to user.
+ * it needs to integrate with a captcha
+ * 
+ */ 
+
+function messages2user_form_submit($form, $form_state) {
+	
+	$surnames = $form_state['values']['surnames'];
+	$names = $form_state['values']['names'];
+	$from = $form_state['values']['email'];
+	$to = $form_state['values']['useremail'];
+	$subject = $form_state['values']['subject'];
+	$body = $form_state['values']['body'];
+	
+	$message = array(
+		'id' => 'message2user',
+		'to' => $to,
+		'from' => $from,
+		'subject' => $subject,
+		'body' => $body,
+		'headers' => array('Content-type' => 'text/html', 'from' => $from),
+	);
+        #dsm(debug_backtrace());
+	if (drupal_mail_send($message)) {
+		drupal_set_message(t('Message sent'));
+	}
+	else {
+	  drupal_set_message(t('Process doesn\'t completed, please try later'));
+	}
+
+	}
