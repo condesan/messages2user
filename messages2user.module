@@ -54,7 +54,7 @@ function messages2user_form($form_state, $node) {
 	$form['uid'] = array(
 		'#type' => 'hidden', 
 		#'#value' => $node->field_perfil_email1[0]['value'], #replace by field which you will use: $node->field_perfil_email1[0]['value']
-		'#value' => $node->uid;
+		'#value' => $node->uid,
 	);
 
 	$form['messages2user']['submit'] = array(
@@ -76,7 +76,7 @@ function messages2user_form($form_state, $node) {
  */ 
 
 function messages2user_form_submit($form, $form_state) {
-	
+	dsm();
 	$surnames = $form_state['values']['surnames'];
 	$names = $form_state['values']['names'];
 	$from = $form_state['values']['email'];
